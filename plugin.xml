@@ -21,7 +21,7 @@
 <plugin
       xmlns="http://apache.org/cordova/ns/plugins/1.0"
       id="cordova-plugin-fullscreenforkfromthemeablebrowser"
-      version="0.0.4">
+      version="0.0.5">
 
     <name>fullscreenforkfromthemeablebrowser</name>
     <description>fullscreenforkfromthemeablebrowser</description>
@@ -44,6 +44,8 @@
                 <param name="android-package" value="com.initialxy.cordova.themeablebrowser.ThemeableBrowser"/>
             </feature>
         </config-file>
+
+        <source-file src="src/android/res/drawable-xhdpi/back.png" target-dir="src/main/res/drawable-xhdpi" />
 
         <source-file src="src/android/ThemeableBrowser.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
         <source-file src="src/android/ThemeableBrowserDialog.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
