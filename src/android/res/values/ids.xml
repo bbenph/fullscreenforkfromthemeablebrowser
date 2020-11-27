@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--themeablebrowser使用-->
+    <item name="themeablebrowser_fulllayout" type="id" />
+    <item name="themeablebrowser_notfulllayout" type="id" />
+    <item name="themeablebrowser_main" type="id" />
+    <item name="themeablebrowser_webpage" type="id" />
+    <item name="themeablebrowser_toolbarfull" type="id" />
+    <item name="themeablebrowser_toolbar" type="id" />
+</resources>
