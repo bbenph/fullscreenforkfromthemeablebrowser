@@ -17,6 +17,96 @@
     under the License.
 -->
 
+
+cordova-plugin-fullscreenforkfromthemeablebrowser
+===============================
+
+安装:  npm install cordova-plugin-fullscreenforkfromthemeablebrowser --save
+
+这个插件扩展自 cordova-plugin-themeablebrowser
+二次开发这个插件是因为 之前产品提的需求 
+第一次打开页面是非全屏, 有一个全屏按钮, 点击后切换至全屏, 上方中间位置有一个退出按钮, 点击切换至非全屏页面
+
+在插件上的改动, 抛弃了原插件的 fullscreen的参数
+
+用法如下
+
+function openAppBrowser(url, title , orientation = "PORTRAIT") {
+    // Keep in mind that you must add your own images to native resource.
+    // Images below are for sample only. They are not imported by this plugin.
+    // 横屏 orientation = LANDSCAPE 
+    // 竖屏 orientation = PORTRAIT
+    window.cordova.ThemeableBrowser.open(url, "_blank," + orientation, {
+        statusbar: {
+            color: "#ffffff",
+        },
+        toolbar:{
+            color:"#ffffff",
+        },
+        toolbarfull:{  //全屏时的按钮栏 默认透明, 可以设置颜色, 同toolbar
+            // color:"#0dbc79", 
+        },
+        // fullscreen_first:true,//打开webview时候先全屏展示 这个是新加参数
+        title: {
+            color: "#000000",
+            showPageTitle: true,
+            staticText: title
+        },
+        backButton: {
+            image: "back",
+            imagePressed: "back_pressed",
+            align: "left",
+            event: "backPressed",
+        },
+        // closeButton: {
+        //     image: "close",
+        //     imagePressed: "close_pressed",
+        //     align: "right",
+        //     event: "closePressed",
+        // },
+        backButtonCanClose: true,
+        fullscButton: {
+            image: "full",
+            imagePressed: "full",
+            align: "right",
+            event: "fullPressed",
+        },
+        //位置 默认居中 不提供设置按钮位置参数 全屏显示时候的唯一退出按钮
+        closefullscButton: {
+            image: "fullclose",
+            imagePressed: "fullclose",
+            event: "closefullPressed",
+        },
+    })
+        .addEventListener("backPressed", function () {
+            //alert("backPressed "+e);
+        })
+        // .addEventListener("closePressed", function () {
+        //     //alert("closePressed "+e);
+        // })
+        .addEventListener("fullPressed", function () {
+            alert("fullPressed");
+        })
+        .addEventListener("closefullPressed", function () {
+            alert("closefullPressed");
+        })
+    // .addEventListener(window.cordova.ThemeableBrowser.EVT_ERR, function (e) {
+    //   console.error(e.message);
+    // })
+    // .addEventListener(window.cordova.ThemeableBrowser.EVT_WRN, function (e) {
+    //   console.log(e.message);
+    // });dd
+}
+
+---
+
+wwwImage的设置不变
+
+
+下面是原插件的readme.md
+
+
+
 cordova-plugin-themeablebrowser
 ===============================
 
