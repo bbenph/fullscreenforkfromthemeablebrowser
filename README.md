@@ -29,7 +29,80 @@ cordova-plugin-fullscreenforkfromthemeablebrowser
 
 在插件上的改动, 抛弃了原插件的 fullscreen的参数
 
+---
+
 用法如下
+
+    // Keep in mind that you must add your own images to native resource.
+    // Images below are for sample only. They are not imported by this plugin.
+    cordova.ThemeableBrowser.open('http://apache.org', '_blank', {
+        statusbar: {
+            color: '#ffffffff'
+        },
+        toolbar: {
+            height: 44,
+            color: '#f0f0f0ff'
+        },
+        title: {
+            color: '#003264ff',
+            showPageTitle: true
+        },
+        backButton: {
+            image: 'back',
+            imagePressed: 'back_pressed',
+            align: 'left',
+            event: 'backPressed'
+        },
+        forwardButton: {
+            image: 'forward',
+            imagePressed: 'forward_pressed',
+            align: 'left',
+            event: 'forwardPressed'
+        },
+        closeButton: {
+            image: 'close',
+            imagePressed: 'close_pressed',
+            align: 'left',
+            event: 'closePressed'
+        },
+        customButtons: [
+            {
+                image: 'share',
+                imagePressed: 'share_pressed',
+                align: 'right',
+                event: 'sharePressed'
+            }
+        ],
+        menu: {
+            image: 'menu',
+            imagePressed: 'menu_pressed',
+            title: 'Test',
+            cancel: 'Cancel',
+            align: 'right',
+            items: [
+                {
+                    event: 'helloPressed',
+                    label: 'Hello World!'
+                },
+                {
+                    event: 'testPressed',
+                    label: 'Test!'
+                }
+            ]
+        },
+        backButtonCanClose: true
+    }).addEventListener('backPressed', function(e) {
+        alert('back pressed');
+    }).addEventListener('helloPressed', function(e) {
+        alert('hello pressed');
+    }).addEventListener('sharePressed', function(e) {
+        alert(e.url);
+    }).addEventListener(cordova.ThemeableBrowser.EVT_ERR, function(e) {
+        console.error(e.message);
+    }).addEventListener(cordova.ThemeableBrowser.EVT_WRN, function(e) {
+        console.log(e.message);
+    });
+
 
 function openAppBrowser(url, title , orientation = "PORTRAIT") {
     // Keep in mind that you must add your own images to native resource.
@@ -98,7 +171,7 @@ function openAppBrowser(url, title , orientation = "PORTRAIT") {
     // });dd
 }
 
----
+
 
 wwwImage的设置不变
 
