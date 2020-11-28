@@ -21,7 +21,7 @@
 <plugin
       xmlns="http://apache.org/cordova/ns/plugins/1.0"
       id="cordova-plugin-fullscreenforkfromthemeablebrowser"
-      version="0.0.9">
+      version="0.1.0">
 
     <name>fullscreenforkfromthemeablebrowser</name>
     <description>fullscreenforkfromthemeablebrowser</description>
@@ -44,17 +44,6 @@
                 <param name="android-package" value="com.initialxy.cordova.themeablebrowser.ThemeableBrowser"/>
             </feature>
         </config-file>
-
-        <!-- 拷贝常用图片过去 -->
-        <source-file src="src/android/res/drawable-xhdpi/back.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/back_pressed.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/forward.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/forward_pressed.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/close.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/close_pressed.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/full.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/full_pressed.png" target-dir="src/main/res/drawable-xhdpi" />
-        <source-file src="src/android/res/drawable-xhdpi/fullclose.png" target-dir="src/main/res/drawable-xhdpi" />
 
         <source-file src="src/android/ThemeableBrowser.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
         <source-file src="src/android/ThemeableBrowserDialog.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
