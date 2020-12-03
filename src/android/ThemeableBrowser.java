@@ -132,6 +132,7 @@ public class ThemeableBrowser extends CordovaPlugin {
             final String orientation = sp.length == 1 ? "AUTO" : sp[sp.length -1];
             final Options features = parseFeature(args.optString(2));
 
+            this.cordova.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             if(orientation.equals("LANDSCAPE")){
                 this.cordova.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
@@ -396,7 +397,7 @@ public class ThemeableBrowser extends CordovaPlugin {
      * Closes the dialog
      */
     public void closeDialog() {
-        this.cordova.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        this.cordova.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         this.cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
