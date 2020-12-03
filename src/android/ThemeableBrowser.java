@@ -129,7 +129,7 @@ public class ThemeableBrowser extends CordovaPlugin {
 
             // final String target = t;
             final String target = sp[0];
-            final String orientation = sp.length == 1 ? "PORTRAIT" : sp[sp.length -1];
+            final String orientation = sp.length == 1 ? "AUTO" : sp[sp.length -1];
             final Options features = parseFeature(args.optString(2));
 
             if(orientation.equals("LANDSCAPE")){
@@ -396,7 +396,7 @@ public class ThemeableBrowser extends CordovaPlugin {
      * Closes the dialog
      */
     public void closeDialog() {
-        this.cordova.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        this.cordova.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         this.cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -448,7 +448,7 @@ public class ThemeableBrowser extends CordovaPlugin {
         ViewGroup notfulllayout =dialog.findViewById(ThemeView_Ids.themeablebrowser_notfulllayout);
         notfulllayout.setVisibility(View.GONE);
 
-        View webpage = dialog.findViewById(ThemeView_Ids.themeablebrowser_webpage);
+        WebView webpage = dialog.findViewById(ThemeView_Ids.themeablebrowser_webpage);
         notfulllayout.removeView(webpage);
         fulllayout.addView(webpage);
 
@@ -468,7 +468,7 @@ public class ThemeableBrowser extends CordovaPlugin {
         ViewGroup notfulllayout =dialog.findViewById(ThemeView_Ids.themeablebrowser_notfulllayout);
         notfulllayout.setVisibility(View.VISIBLE);
 
-        View webpage = dialog.findViewById(ThemeView_Ids.themeablebrowser_webpage);
+        WebView webpage = dialog.findViewById(ThemeView_Ids.themeablebrowser_webpage);
         fulllayout.removeView(webpage);
         notfulllayout.addView(webpage);
     }
