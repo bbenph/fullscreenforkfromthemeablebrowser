@@ -21,6 +21,12 @@
 cordova-plugin-fullscreenforkfromthemeablebrowser
 ===============================
 
+
+目前之开发了Android  ,  ios后面再搞
+
+![Android Sample](doc/images/demo_and.png)
+
+
 安装:  npm install cordova-plugin-fullscreenforkfromthemeablebrowser --save
 
 这个插件扩展自 cordova-plugin-themeablebrowser
