@@ -33,57 +33,55 @@ cordova-plugin-fullscreenforkfromthemeablebrowser
 
 用法如下
 
-
-/* eslint-disable */
-function openAppBrowser(url, title , orientation = "AUTO") {
     // Keep in mind that you must add your own images to native resource.
     // Images below are for sample only. They are not imported by this plugin.
     // 自动切换 orientation = AUTO
     // 强制横屏 orientation = LANDSCAPE
     // 强制竖屏 orientation = PORTRAIT
-    window.cordova.ThemeableBrowser.open(url, "_blank," + orientation, {
-        statusbar: {
-            color: "#ffffff",
-        },
-        toolbar:{
-            color:"#ffffff",
-        },
-        toolbarfull:{  //全屏时的按钮栏 默认透明, 可以设置颜色, 同toolbar
-            height: 80,
-            // color:"#0dbc79", 
-        },
-        // fullscreen_first:true,//打开webview时候直接全屏展示
-        title: {
-            color: "#000000",
-            showPageTitle: true,
-            staticText: title
-        },
-        // backButton: {
-        //     image: "back",
-        //     imagePressed: "back",
-        //     align: "left",
-        //     event: "backPressed",
-        // },
-        closeButton: {
-            image: "back",
-            imagePressed: "back",
-            align: "left",
-            event: "closePressed",
-        },
-        backButtonCanClose: true,
-        fullscButton: {
-            image: "full",
-            imagePressed: "full",
-            align: "right",
-            event: "fullPressed",
-        },
-        //位置 默认居中 不提供设置按钮位置参数 全屏显示时候的唯一退出按钮
-        closefullscButton: {
-            image: "fullclose",
-            imagePressed: "fullclose",
-            event: "closefullPressed",
-        },
-    })
+    function openAppBrowser(url, title , orientation = "AUTO") {
+        window.cordova.ThemeableBrowser.open(url, "_blank," + orientation, {
+            statusbar: {
+                color: "#ffffff",
+            },
+            toolbar:{
+                color:"#ffffff",
+            },
+            toolbarfull:{  //全屏时的按钮栏 默认透明, 可以设置颜色, 同toolbar
+                height: 80,
+                // color:"#0dbc79", 
+            },
+            // fullscreen_first:true,//打开webview时候直接全屏展示
+            title: {
+                color: "#000000",
+                showPageTitle: true,
+                staticText: title
+            },
+            // backButton: {
+            //     image: "back",
+            //     imagePressed: "back",
+            //     align: "left",
+            //     event: "backPressed",
+            // },
+            closeButton: {
+                image: "back",
+                imagePressed: "back",
+                align: "left",
+                event: "closePressed",
+            },
+            backButtonCanClose: true,
+            fullscButton: {
+                image: "full",
+                imagePressed: "full",
+                align: "right",
+                event: "fullPressed",
+            },
+            //位置 默认居中 不提供设置按钮位置参数 全屏显示时候的唯一退出按钮
+            closefullscButton: {
+                image: "fullclose",
+                imagePressed: "fullclose",
+                event: "closefullPressed",
+            },
+        })
         // .addEventListener("backPressed", function () {
         //     //alert("backPressed "+e);
         // })
@@ -96,26 +94,27 @@ function openAppBrowser(url, title , orientation = "AUTO") {
         // .addEventListener("closefullPressed", function () {
         //     // alert("closefullPressed");
         // })
-    // .addEventListener(window.cordova.ThemeableBrowser.EVT_ERR, function (e) {
-    //   console.error(e.message);
-    // })
-    // .addEventListener(window.cordova.ThemeableBrowser.EVT_WRN, function (e) {
-    //   console.log(e.message);
-    // });dd
-}
+        // .addEventListener(window.cordova.ThemeableBrowser.EVT_ERR, function (e) {
+        //   console.error(e.message);
+        // })
+        // .addEventListener(window.cordova.ThemeableBrowser.EVT_WRN, function (e) {
+        //   console.log(e.message);
+        // });dd
+        }
+        function switchOrientation(num) {
+            switch (num) {
+                case 0:
+                    return "AUTO"
+                case 1:
+                    return "PORTRAIT"
+                case 2:
+                return "LANDSCAPE"
+                default:
+                    return "AUTO"
+            }
+        }
 
-function switchOrientation(num) {
-    switch (num) {
-        case 0:
-            return "AUTO"
-        case 1:
-            return "PORTRAIT"
-        case 2:
-        return "LANDSCAPE"
-        default:
-            return "AUTO"
-    }
-}
+
 
 
 wwwImage的设置不变
