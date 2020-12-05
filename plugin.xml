@@ -45,6 +45,12 @@
             </feature>
         </config-file>
 
+        <!-- 拷贝按钮图片到Android目录 -->
+        <source-file src="src/android/res/drawable-xhdpi/back.png" target-dir="src/main/res/drawable-xhdpi" />
+        <source-file src="src/android/res/drawable-xhdpi/close.png" target-dir="src/main/res/drawable-xhdpi" />
+        <source-file src="src/android/res/drawable-xhdpi/full.png" target-dir="src/main/res/drawable-xhdpi" />
+        <source-file src="src/android/res/drawable-xhdpi/fullclose.png" target-dir="src/main/res/drawable-xhdpi" />
+
         <source-file src="src/android/ThemeableBrowser.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
         <source-file src="src/android/ThemeableBrowserDialog.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
         <source-file src="src/android/InAppChromeClient.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
