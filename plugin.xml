@@ -21,7 +21,7 @@
 <plugin
       xmlns="http://apache.org/cordova/ns/plugins/1.0"
       id="cordova-plugin-fullscreenforkfromthemeablebrowser"
-      version="2.1.2">
+      version="2.1.3">
 
     <name>fullscreenforkfromthemeablebrowser</name>
     <description>fullscreenforkfromthemeablebrowser</description>
