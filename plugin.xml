@@ -71,11 +71,6 @@
         <header-file src="src/ios/CDVThemeableBrowser.h" />
         <source-file src="src/ios/CDVThemeableBrowser.m" />
 
-        <resource-file src="src/ios/Resources/full.imageset" target-dir="../Images.xcassets/" />
-        <resource-file src="src/ios/Resources/close.png" />
-        <resource-file src="src/ios/Resources/full@2x.png" />
-        <resource-file src="src/ios/Resources/fullclose@2x.png" />
-
         <framework src="CoreGraphics.framework" />
     </platform>
 </plugin>
