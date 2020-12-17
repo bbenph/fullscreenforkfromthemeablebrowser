@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-fullscreenforkfromthemeablebrowser",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Cordova ThemeableBrowser Plugin",
   "cordova": {
     "id": "cordova-plugin-fullscreenforkfromthemeablebrowser",
