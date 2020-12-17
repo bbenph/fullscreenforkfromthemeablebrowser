@@ -758,7 +758,7 @@
     [self.view sendSubviewToBack:self.webView];
     
     self.webView.delegate = _webViewDelegate;
-    self.webView.backgroundColor = [UIColor greenColor];
+    self.webView.backgroundColor = [UIColor whiteColor];
     
     self.webView.clearsContextBeforeDrawing = YES;
     self.webView.clipsToBounds = YES;
@@ -832,7 +832,7 @@
         self.toolbarfull.multipleTouchEnabled = NO;
         self.toolbarfull.opaque = NO;
         self.toolbarfull.userInteractionEnabled = YES;
-        self.toolbarfull.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:toolbarfullProps withKey:kThemeableBrowserPropColor withDefault:@"#e60035ff"]];
+        self.toolbarfull.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:toolbarfullProps withKey:kThemeableBrowserPropColor withDefault:@"#ffffff00"]];
 
     CGFloat labelInset = 5.0;
     float locationBarY = self.view.bounds.size.height - LOCATIONBAR_HEIGHT;
@@ -1183,7 +1183,7 @@
         CGFloat toolbarfullHeight = self.toolbarfull.frame.size.height;
         CGFloat fullcloseXOffset = floorf((screenWidth/2) - (fullclosebtnSize.width/2));
         CGFloat fullcloseYOffset = floorf((toolbarfullHeight - fullclosebtnSize.height) / 2);
-        self.fullcloseButton.backgroundColor = [UIColor blueColor];
+        // self.fullcloseButton.backgroundColor = [UIColor blueColor];
         
         self.fullcloseButton.frame = CGRectMake(fullcloseXOffset, fullcloseYOffset,fullclosebtnSize.width,fullclosebtnSize.height);
     }
