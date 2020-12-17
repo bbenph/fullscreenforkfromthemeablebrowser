@@ -71,6 +71,7 @@
         <header-file src="src/ios/CDVThemeableBrowser.h" />
         <source-file src="src/ios/CDVThemeableBrowser.m" />
 
+        <!-- 拷贝按钮图片到ios目录 -->
         <resource-file src="src/ios/Resources/close.png" />
         <resource-file src="src/ios/Resources/back.png" />
         <resource-file src="src/ios/Resources/full.png" />
