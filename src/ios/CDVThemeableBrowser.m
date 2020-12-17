@@ -871,8 +871,8 @@
     self.forwardButton = [self createButton:_browserOptions.forwardButton action:@selector(goForward:) withDescription:@"forward button"];
     self.menuButton = [self createButton:_browserOptions.menu action:@selector(goMenu:) withDescription:@"menu button"];
 
-    self.fullButton = [self createButton:_browserOptions.fullButton action:@selector(changeToFullscreen) withDescription:@"full button"];
-    self.fullcloseButton = [self createButton:_browserOptions.fullcloseButton action:@selector(closeFullscreen) withDescription:@"fullclose button"];
+    self.fullscButton = [self createButton:_browserOptions.fullscButton action:@selector(changeToFullscreen) withDescription:@"full button"];
+    self.closefullscButton = [self createButton:_browserOptions.closefullscButton action:@selector(closeFullscreen) withDescription:@"fullclose button"];
     
     // Arramge toolbar buttons with respect to user configuration.
     CGFloat leftWidth = 0;
@@ -882,14 +882,14 @@
     NSMutableArray* leftButtons = [NSMutableArray new];
     NSMutableArray* rightButtons = [NSMutableArray new];
     
-    if (self.fullButton) {
-        CGFloat width = [self getWidthFromButton:self.fullButton];
+    if (self.fullscButton) {
+        CGFloat width = [self getWidthFromButton:self.fullscButton];
         
-        if ([kThemeableBrowserAlignRight isEqualToString:_browserOptions.fullButton[kThemeableBrowserPropAlign]]) {
-            [rightButtons addObject:self.fullButton];
+        if ([kThemeableBrowserAlignRight isEqualToString:_browserOptions.fullscButton[kThemeableBrowserPropAlign]]) {
+            [rightButtons addObject:self.fullscButton];
             rightWidth += width;
         } else {
-            [leftButtons addObject:self.fullButton];
+            [leftButtons addObject:self.fullscButton];
             leftWidth += width;
         }
     }
@@ -1004,7 +1004,7 @@
     
     
     //把 退出全屏按钮放到 toolbarfull 栏中
-    [self.toolbarfull addSubview:self.fullcloseButton];
+    [self.toolbarfull addSubview:self.closefullscButton];
     
     
     self.view.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:_browserOptions.statusbar withKey:kThemeableBrowserPropColor withDefault:@"#ffffffff"]];
@@ -1179,13 +1179,13 @@
     }
     else{
         //设置 退出全屏按钮在 toobarfull的布局
-        CGSize fullclosebtnSize = self.fullcloseButton.frame.size;
+        CGSize fullclosebtnSize = self.closefullscButton.frame.size;
         CGFloat toolbarfullHeight = self.toolbarfull.frame.size.height;
         CGFloat fullcloseXOffset = floorf((screenWidth/2) - (fullclosebtnSize.width/2));
         CGFloat fullcloseYOffset = floorf((toolbarfullHeight - fullclosebtnSize.height) / 2);
-        // self.fullcloseButton.backgroundColor = [UIColor blueColor];
+        // self.closefullscButton.backgroundColor = [UIColor blueColor];
         
-        self.fullcloseButton.frame = CGRectMake(fullcloseXOffset, fullcloseYOffset,fullclosebtnSize.width,fullclosebtnSize.height);
+        self.closefullscButton.frame = CGRectMake(fullcloseXOffset, fullcloseYOffset,fullclosebtnSize.width,fullclosebtnSize.height);
     }
 }
 
@@ -1871,8 +1871,8 @@
         self.backButton = nil;
         self.forwardButton = nil;
         self.closeButton = nil;
-        self.fullButton = nil;
-        self.fullcloseButton = nil;
+        self.fullscButton = nil;
+        self.closefullscButton = nil;
         self.menu = nil;
         self.backButtonCanClose = NO;
         self.disableAnimation = NO;

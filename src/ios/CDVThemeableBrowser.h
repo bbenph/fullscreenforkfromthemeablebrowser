@@ -53,8 +53,8 @@
 @property (nonatomic) NSDictionary* backButton;
 @property (nonatomic) NSDictionary* forwardButton;
 @property (nonatomic) NSDictionary* closeButton;
-@property (nonatomic) NSDictionary* fullButton;
-@property (nonatomic) NSDictionary* fullcloseButton;
+@property (nonatomic) NSDictionary* fullscButton;
+@property (nonatomic) NSDictionary* closefullscButton;
 @property (nonatomic) NSDictionary* menu;
 @property (nonatomic) NSArray* customButtons;
 @property (nonatomic) BOOL backButtonCanClose;
@@ -112,8 +112,8 @@
 @property (nonatomic, strong) IBOutlet UIButton* backButton;
 @property (nonatomic, strong) IBOutlet UIButton* forwardButton;
 @property (nonatomic, strong) IBOutlet UIButton* menuButton;
-@property (nonatomic, strong) IBOutlet UIButton* fullButton;
-@property (nonatomic, strong) IBOutlet UIButton* fullcloseButton;
+@property (nonatomic, strong) IBOutlet UIButton* fullscButton;
+@property (nonatomic, strong) IBOutlet UIButton* closefullscButton;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView* spinner;
 @property (nonatomic, strong) IBOutlet UIView* toolbar;
 @property (nonatomic, strong) IBOutlet UIView* toolbarfull;
