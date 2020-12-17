@@ -71,6 +71,11 @@
         <header-file src="src/ios/CDVThemeableBrowser.h" />
         <source-file src="src/ios/CDVThemeableBrowser.m" />
 
+        <resource-file src="src/ios/Resources/close.png" />
+        <resource-file src="src/ios/Resources/back.png" />
+        <resource-file src="src/ios/Resources/full.png" />
+        <resource-file src="src/ios/Resources/fullclose.png" />
+
         <framework src="CoreGraphics.framework" />
     </platform>
 </plugin>

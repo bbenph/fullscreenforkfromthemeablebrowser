@@ -48,15 +48,20 @@
 
 @property (nonatomic) NSDictionary* statusbar;
 @property (nonatomic) NSDictionary* toolbar;
+@property (nonatomic) NSDictionary* toolbarfull;
 @property (nonatomic) NSDictionary* title;
 @property (nonatomic) NSDictionary* backButton;
 @property (nonatomic) NSDictionary* forwardButton;
 @property (nonatomic) NSDictionary* closeButton;
+@property (nonatomic) NSDictionary* fullButton;
+@property (nonatomic) NSDictionary* fullcloseButton;
 @property (nonatomic) NSDictionary* menu;
 @property (nonatomic) NSArray* customButtons;
 @property (nonatomic) BOOL backButtonCanClose;
 @property (nonatomic) BOOL disableAnimation;
 @property (nonatomic) BOOL fullscreen;
+@property (nonatomic) BOOL fullscreen_first;
+
 
 @end
 
@@ -78,6 +83,8 @@
 - (void)show:(CDVInvokedUrlCommand*)command;
 - (void)show:(CDVInvokedUrlCommand*)command withAnimation:(BOOL)animated;
 - (void)reload:(CDVInvokedUrlCommand*)command;
+- (void)full:(CDVInvokedUrlCommand*)command;
+- (void)fullclose:(CDVInvokedUrlCommand*)command;
 
 @end
 
@@ -88,6 +95,7 @@
     NSInteger _userAgentLockToken;
     UIStatusBarStyle _statusBarStyle;
     CDVThemeableBrowserOptions *_browserOptions;
+    NSString* _orientation;
     
 #ifdef __CORDOVA_4_0_0
     CDVUIWebViewDelegate* _webViewDelegate;
@@ -104,8 +112,11 @@
 @property (nonatomic, strong) IBOutlet UIButton* backButton;
 @property (nonatomic, strong) IBOutlet UIButton* forwardButton;
 @property (nonatomic, strong) IBOutlet UIButton* menuButton;
+@property (nonatomic, strong) IBOutlet UIButton* fullButton;
+@property (nonatomic, strong) IBOutlet UIButton* fullcloseButton;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView* spinner;
 @property (nonatomic, strong) IBOutlet UIView* toolbar;
+@property (nonatomic, strong) IBOutlet UIView* toolbarfull;
 
 @property (nonatomic, strong) NSArray* leftButtons;
 @property (nonatomic, strong) NSArray* rightButtons;
@@ -123,8 +134,11 @@
 - (void)showLocationBar:(BOOL)show;
 - (void)showToolBar:(BOOL)show : (NSString*) toolbarPosition;
 - (void)setCloseButtonTitle:(NSString*)title;
+- (void)changeToFullscreen;
+- (void)closeFullscreen;
 
-- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVThemeableBrowserOptions*) browserOptions navigationDelete:(CDVThemeableBrowser*) navigationDelegate statusBarStyle:(UIStatusBarStyle) statusBarStyle;
+- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVThemeableBrowserOptions*) browserOptions navigationDelete:(CDVThemeableBrowser*) navigationDelegate statusBarStyle:(UIStatusBarStyle) statusBarStyle
+    withOrientation:(NSString*) orientation;
 
 + (UIColor *)colorFromRGBA:(NSString *)rgba;
 

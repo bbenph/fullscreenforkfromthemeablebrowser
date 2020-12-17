@@ -131,10 +131,15 @@
     CDVPluginResult* pluginResult;
     
     NSString* url = [command argumentAtIndex:0];
-    NSString* target = [command argumentAtIndex:1 withDefault:kThemeableBrowserTargetSelf];
+    NSArray* sp = [[command argumentAtIndex:1] componentsSeparatedByString:@","];
+    NSString* target = sp[0];
+    NSString* orientation = sp.count ==1 ? @"AUTO":sp[sp.count -1];
+    
+//    NSString* target = [command argumentAtIndex:1 withDefault:kThemeableBrowserTargetSelf];
     NSString* options = [command argumentAtIndex:2 withDefault:@"" andClass:[NSString class]];
     
     self.callbackId = command.callbackId;
+    
     
     if (url != nil) {
 #ifdef __CORDOVA_4_0_0
@@ -155,7 +160,7 @@
         } else if ([target isEqualToString:kThemeableBrowserTargetSystem]) {
             [self openInSystem:absoluteUrl];
         } else { // _blank or anything else
-            [self openInThemeableBrowser:absoluteUrl withOptions:options];
+            [self openInThemeableBrowser:absoluteUrl withOptions:options withOrientation:orientation];
         }
         
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -207,7 +212,7 @@
     return obj;
 }
 
-- (void)openInThemeableBrowser:(NSURL*)url withOptions:(NSString*)options
+- (void)openInThemeableBrowser:(NSURL*)url withOptions:(NSString*)options withOrientation:(NSString*)orientation
 {
     CDVThemeableBrowserOptions* browserOptions = [self parseOptions:options];
     
@@ -258,18 +263,19 @@
                                                initWithUserAgent:originalUA prevUserAgent:[self.commandDelegate userAgent]
                                                browserOptions: browserOptions
                                                navigationDelete:self
-                                               statusBarStyle:statusBarStyle];
+                                               statusBarStyle:statusBarStyle
+                                               withOrientation:orientation];
         
         if ([self.viewController conformsToProtocol:@protocol(CDVScreenOrientationDelegate)]) {
             self.themeableBrowserViewController.orientationDelegate = (UIViewController <CDVScreenOrientationDelegate>*)self.viewController;
         }
     }
     
-    [self.themeableBrowserViewController showLocationBar:browserOptions.location];
-    [self.themeableBrowserViewController showToolBar:YES:browserOptions.toolbarposition];
-    if (browserOptions.closebuttoncaption != nil) {
-        // [self.themeableBrowserViewController setCloseButtonTitle:browserOptions.closebuttoncaption];
-    }
+//    [self.themeableBrowserViewController showLocationBar:browserOptions.location];
+//    [self.themeableBrowserViewController showToolBar:YES:browserOptions.toolbarposition];
+//    if (browserOptions.closebuttoncaption != nil) {
+//        [self.themeableBrowserViewController setCloseButtonTitle:browserOptions.closebuttoncaption];
+//    }
     // Set Presentation Style
     UIModalPresentationStyle presentationStyle = UIModalPresentationFullScreen; // default
     if (browserOptions.presentationstyle != nil) {
@@ -712,13 +718,14 @@
 
 @synthesize currentURL;
 
-- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVThemeableBrowserOptions*) browserOptions navigationDelete:(CDVThemeableBrowser*) navigationDelegate statusBarStyle:(UIStatusBarStyle) statusBarStyle
+- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions: (CDVThemeableBrowserOptions*) browserOptions navigationDelete:(CDVThemeableBrowser*) navigationDelegate statusBarStyle:(UIStatusBarStyle) statusBarStyle withOrientation:(NSString*) orientation
 {
     self = [super init];
     if (self != nil) {
         _userAgent = userAgent;
         _prevUserAgent = prevUserAgent;
         _browserOptions = browserOptions;
+        _orientation = orientation;
 #ifdef __CORDOVA_4_0_0
         _webViewDelegate = [[CDVUIWebViewDelegate alloc] initWithDelegate:self];
 #else
@@ -741,7 +748,7 @@
     NSDictionary* toolbarProps = _browserOptions.toolbar;
     CGFloat toolbarHeight = [self getFloatFromDict:toolbarProps withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
     if (!_browserOptions.fullscreen) {
-        webViewBounds.size.height -= toolbarHeight;
+//        webViewBounds.size.height -= toolbarHeight;
     }
     self.webView = [[UIWebView alloc] initWithFrame:webViewBounds];
     
@@ -751,14 +758,14 @@
     [self.view sendSubviewToBack:self.webView];
     
     self.webView.delegate = _webViewDelegate;
-    self.webView.backgroundColor = [UIColor whiteColor];
+    self.webView.backgroundColor = [UIColor greenColor];
     
     self.webView.clearsContextBeforeDrawing = YES;
     self.webView.clipsToBounds = YES;
     self.webView.contentMode = UIViewContentModeScaleToFill;
     self.webView.multipleTouchEnabled = YES;
     self.webView.opaque = YES;
-    self.webView.scalesPageToFit = NO;
+    self.webView.scalesPageToFit = YES;
     self.webView.userInteractionEnabled = YES;
     
     self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
@@ -808,6 +815,25 @@
         }
     }
     
+    //全屏的 toolbar
+    NSDictionary* toolbarfullProps = _browserOptions.toolbarfull;
+    CGFloat toolbarfullHeight = [self getFloatFromDict:toolbarfullProps withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
+//    CGFloat toolbarfullY = 0.0;
+    CGRect toolbarfullFrame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, toolbarHeight);
+    
+    self.toolbarfull = [[UIView alloc] initWithFrame:toolbarfullFrame];
+        self.toolbarfull.alpha = 1.000;
+        self.toolbarfull.autoresizesSubviews = YES;
+        self.toolbarfull.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        self.toolbarfull.clearsContextBeforeDrawing = NO;
+        self.toolbarfull.clipsToBounds = YES;
+        self.toolbarfull.contentMode = UIViewContentModeScaleToFill;
+        self.toolbarfull.hidden = NO;
+        self.toolbarfull.multipleTouchEnabled = NO;
+        self.toolbarfull.opaque = NO;
+        self.toolbarfull.userInteractionEnabled = YES;
+        self.toolbarfull.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:toolbarfullProps withKey:kThemeableBrowserPropColor withDefault:@"#e60035ff"]];
+
     CGFloat labelInset = 5.0;
     float locationBarY = self.view.bounds.size.height - LOCATIONBAR_HEIGHT;
     
@@ -844,6 +870,9 @@
     self.backButton = [self createButton:_browserOptions.backButton action:@selector(goBack:) withDescription:@"back button"];
     self.forwardButton = [self createButton:_browserOptions.forwardButton action:@selector(goForward:) withDescription:@"forward button"];
     self.menuButton = [self createButton:_browserOptions.menu action:@selector(goMenu:) withDescription:@"menu button"];
+
+    self.fullButton = [self createButton:_browserOptions.fullButton action:@selector(changeToFullscreen) withDescription:@"full button"];
+    self.fullcloseButton = [self createButton:_browserOptions.fullcloseButton action:@selector(closeFullscreen) withDescription:@"fullclose button"];
     
     // Arramge toolbar buttons with respect to user configuration.
     CGFloat leftWidth = 0;
@@ -852,6 +881,18 @@
     // Both left and right side buttons will be ordered from outside to inside.
     NSMutableArray* leftButtons = [NSMutableArray new];
     NSMutableArray* rightButtons = [NSMutableArray new];
+    
+    if (self.fullButton) {
+        CGFloat width = [self getWidthFromButton:self.fullButton];
+        
+        if ([kThemeableBrowserAlignRight isEqualToString:_browserOptions.fullButton[kThemeableBrowserPropAlign]]) {
+            [rightButtons addObject:self.fullButton];
+            rightWidth += width;
+        } else {
+            [leftButtons addObject:self.fullButton];
+            leftWidth += width;
+        }
+    }
     
     if (self.closeButton) {
         CGFloat width = [self getWidthFromButton:self.closeButton];
@@ -937,16 +978,8 @@
         [self.toolbar addSubview:button];
     }
     
-    [self layoutButtons];
-    
-    self.titleOffsetLeft = leftWidth;
-    self.titleOffsetRight = rightWidth;
-    self.toolbarPaddingX = 0;
-    if (_browserOptions.toolbar[kThemeableBrowserPropToolbarPaddingX]) {
-        self.toolbarPaddingX = [_browserOptions.toolbar[kThemeableBrowserPropToolbarPaddingX] floatValue];
-    }
-    
-    
+//    [self layoutButtons];
+
     // The correct positioning of title is not that important right now, since
     // rePositionViews will take care of it a bit later.
     self.titleLabel = nil;
@@ -969,11 +1002,35 @@
         [self.toolbar addSubview:self.titleLabel];
     }
     
+    
+    //把 退出全屏按钮放到 toolbarfull 栏中
+    [self.toolbarfull addSubview:self.fullcloseButton];
+    
+    
     self.view.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:_browserOptions.statusbar withKey:kThemeableBrowserPropColor withDefault:@"#ffffffff"]];
-    [self.view addSubview:self.toolbar];
+    if(_browserOptions.fullscreen_first){
+        [self.view addSubview:self.toolbarfull];
+    } else {
+        [self.view addSubview:self.toolbar];
+    }
+
+//    [self.view bringSubviewToFront:self.toolbar];
     // [self.view addSubview:self.addressLabel];
     // [self.view addSubview:self.spinner];
 }
+
+    - (UIEdgeInsets)safeAreaInsetsWithView:(UIView *)view // 获取安全区域
+    {
+    #ifdef __IPHONE_11_0
+        if (@available(iOS 11.0, *))
+        {
+//            return [view safeAreaInsets];
+            return [UIApplication sharedApplication].delegate.window.safeAreaInsets;
+        }
+    #endif
+
+        return UIEdgeInsetsZero;
+    }
 
 /**
  * This is a rather unintuitive helper method to load images. The reason why this method exists
@@ -990,7 +1047,10 @@
 {
     UIImage* result = nil;
     if (name) {
-        result = [UIImage imageNamed:name];
+        // result = [UIImage imageNamed:name];
+        NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"png"];
+        NSData *image = [NSData dataWithContentsOfFile:path];
+        result = [UIImage imageWithData:image scale:2];
     } else if (altPath) {
         NSString* path = [[[NSBundle mainBundle] bundlePath]
                           stringByAppendingPathComponent:[NSString pathWithComponents:@[@"www", altPath]]];
@@ -1089,25 +1149,43 @@
 
 - (void)layoutButtons
 {
-    CGFloat screenWidth = CGRectGetWidth(self.view.frame);
-    CGFloat toolbarHeight = self.toolbar.frame.size.height;
-    CGFloat toolbarPadding = _browserOptions.fullscreen ? [self getStatusBarOffset] : 0.0;
+//    CGFloat screenWidth = CGRectGetWidth(self.view.frame);
+    CGFloat screenWidth = self.view.frame.size.width;
+    CGFloat screenHeight = self.view.frame.size.height;
     
-    // Layout leftButtons and rightButtons from outer to inner.
-    CGFloat left = self.toolbarPaddingX;
-    for (UIButton* button in self.leftButtons) {
-        CGSize size = button.frame.size;
-        CGFloat yOffset = floorf((toolbarHeight + (toolbarPadding/2) - size.height) / 2);
-        button.frame = CGRectMake(left, yOffset, size.width, size.height);
-        left += size.width;
+    if(!_browserOptions.fullscreen){
+        // Layout leftButtons and rightButtons from outer to inner.
+        CGFloat toolbarHeight = self.toolbar.frame.size.height;
+        CGFloat left = self.toolbarPaddingX;
+        for (UIButton* button in self.leftButtons) {
+            CGSize size = button.frame.size;
+            CGFloat yOffset = floorf((toolbarHeight - size.height) / 2);
+            button.frame = CGRectMake(left, yOffset, size.width, size.height);
+            left += size.width;
+        }
+        
+        CGFloat right = self.toolbarPaddingX;
+        for (UIButton* button in self.rightButtons) {
+            CGSize size = button.frame.size;
+            CGFloat yOffset = floorf((toolbarHeight - size.height) / 2);
+            button.frame = CGRectMake(screenWidth - right - size.width, yOffset, size.width, size.height);
+            right += size.width;
+        }
+        
+        CGSize size = self.titleLabel.frame.size;
+        CGFloat yOffset =floorf((toolbarHeight - size.height) / 2);
+        CGFloat titleLabelWidth = screenWidth - left - right;
+        self.titleLabel.frame = CGRectMake(left, yOffset , titleLabelWidth , size.height);
     }
-    
-    CGFloat right = self.toolbarPaddingX;
-    for (UIButton* button in self.rightButtons) {
-        CGSize size = button.frame.size;
-        CGFloat yOffset = floorf((toolbarHeight + (toolbarPadding/2) - size.height) / 2);
-        button.frame = CGRectMake(screenWidth - right - size.width, yOffset, size.width, size.height);
-        right += size.width;
+    else{
+        //设置 退出全屏按钮在 toobarfull的布局
+        CGSize fullclosebtnSize = self.fullcloseButton.frame.size;
+        CGFloat toolbarfullHeight = self.toolbarfull.frame.size.height;
+        CGFloat fullcloseXOffset = floorf((screenWidth/2) - (fullclosebtnSize.width/2));
+        CGFloat fullcloseYOffset = floorf((toolbarfullHeight - fullclosebtnSize.height) / 2);
+        self.fullcloseButton.backgroundColor = [UIColor blueColor];
+        
+        self.fullcloseButton.frame = CGRectMake(fullcloseXOffset, fullcloseYOffset,fullclosebtnSize.width,fullclosebtnSize.height);
     }
 }
 
@@ -1148,9 +1226,9 @@
             // put locationBar on top of the toolBar
             
             CGRect webViewBounds = self.view.bounds;
-            if (!_browserOptions.fullscreen) {
-                webViewBounds.size.height -= toolbarHeight;
-            }
+//            if (!_browserOptions.fullscreen) {
+//                webViewBounds.size.height -= toolbarHeight;
+//            }
             [self setWebViewFrame:webViewBounds];
             
             locationbarFrame.origin.y = webViewBounds.size.height;
@@ -1275,6 +1353,24 @@
         }
     }
     return statusBarStyle;
+}
+
+- (void)changeToFullscreen
+{
+    _browserOptions.fullscreen = YES;
+    [self.toolbar removeFromSuperview];
+    [self.view addSubview:self.toolbarfull];
+    [self.view bringSubviewToFront:self.toolbarfull];
+    
+    [self rePositionViews];
+}
+- (void)closeFullscreen
+{
+    _browserOptions.fullscreen = NO;
+    [self.toolbarfull removeFromSuperview];
+    [self.view addSubview:self.toolbar];
+    [self.view bringSubviewToFront:self.toolbar];
+    [self rePositionViews];
 }
 
 - (void)close
@@ -1444,55 +1540,88 @@
 //
 - (float) getStatusBarOffset {
     CGRect statusBarFrame = [[UIApplication sharedApplication] statusBarFrame];
-    float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
-    return statusBarOffset;
+//    float statusBarOffset = IsAtLeastiOSVersion(@"7.0") ? MIN(statusBarFrame.size.width, statusBarFrame.size.height) : 0.0;
+//    return statusBarOffset;
+    
+    return statusBarFrame.size.height;
 }
 
 - (void) rePositionViews {
     // Webview height is a bug that appear in the plugin for ios >= 11 so we need to keep the previous code that work great for previous versions
     CGFloat toolbarHeight = [self getFloatFromDict:_browserOptions.toolbar withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
+    CGFloat toolbarfullHeight = [self getFloatFromDict:_browserOptions.toolbarfull withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
     CGFloat statusBarOffset = [self getStatusBarOffset];
-    CGFloat toolbarOffset = _browserOptions.fullscreen ? 0.0 : statusBarOffset;
-    CGFloat toolbarPadding = _browserOptions.fullscreen ? statusBarOffset : 0.0;
+    //toolbar 距离顶部 y 轴偏移量 = 状态栏高度
+    CGFloat toolbarOffset = statusBarOffset;
+    CGFloat toolbarfullOffset = statusBarOffset;
+//    CGFloat toolbarPadding = _browserOptions.fullscreen ? statusBarOffset : 0.0;
     
-    if (@available(iOS 11, *)) {
+//    if (@available(iOS 11, *)) {
+      if (true) {
         // iOS 11+
-        CGFloat webviewOffset = _browserOptions.fullscreen ? toolbarPadding + toolbarHeight : toolbarHeight + statusBarOffset;
-        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarHeight == statusBarOffset ? statusBarOffset+10 : statusBarOffset+toolbarHeight-statusBarOffset+10) : -(toolbarOffset+toolbarPadding-statusBarOffset+10);
+//        CGFloat webviewOffset = _browserOptions.fullscreen ? toolbarPadding + toolbarHeight : toolbarHeight + statusBarOffset;
+//        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarHeight == statusBarOffset ? statusBarOffset+10 : statusBarOffset+toolbarHeight-statusBarOffset+10) : -(toolbarOffset+toolbarPadding-statusBarOffset+10);
         
-        if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
-            // The webview height calculated did not take the status bar into account. Thus we need to remove status bar height to the webview height.
-            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, (self.webView.frame.size.height+webviewHeightOffset))];
-            [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, self.toolbar.frame.size.width, self.toolbar.frame.size.height + toolbarPadding)];
-        }
+          
+        CGFloat webviewOffset = _browserOptions.fullscreen ? statusBarOffset  : statusBarOffset + toolbarHeight;
+        CGFloat webviewHeight = self.view.frame.size.height - webviewOffset;
+        CGFloat screenWidth = self.view.frame.size.width;
+
+        //webview 距离顶部 y 轴偏移量 全屏 = 状态栏高度  非全屏 = toolbar+状态栏高度
+        //webview 横屏时候左右边距把 ios 的安全距离算上
+          if (statusBarOffset == 0) {
+              UIEdgeInsets insets = [self safeAreaInsetsWithView:self.view];
+              CGFloat width = screenWidth + insets.left + insets.right;
+              [self.webView setFrame:CGRectMake( -insets.left, webviewOffset,width , webviewHeight)];
+          }else{
+              [self.webView setFrame:CGRectMake(0, webviewOffset, screenWidth , webviewHeight)];
+          }
+          
+        [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, screenWidth, toolbarHeight)];
+        [self.toolbarfull setFrame:CGRectMake(self.toolbarfull.frame.origin.x, toolbarfullOffset, screenWidth, toolbarfullHeight)];
+        
+          // When positionning the iphone to landscape mode, status bar is hidden. The problem is that we set the webview height just before with removing the status bar height. We need to adjust the phenomen by adding the preview status bar height. We had to add manually 20 (pixel) because in landscape mode, the status bar height is equal to 0.
+          // web
+          if (statusBarOffset == 0) {
+              [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, (self.webView.frame.size.height+20))];
+          }
+          
+//        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarHeight == statusBarOffset ? statusBarOffset+10 : statusBarOffset+toolbarHeight-statusBarOffset+10) : -(toolbarOffset+toolbarPadding-statusBarOffset+10);
+//
+//        if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
+//            // The webview height calculated did not take the status bar into account. Thus we need to remove status bar height to the webview height.
+//            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, (self.webView.frame.size.height+webviewHeightOffset))];
+//            [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, self.toolbar.frame.size.width, self.toolbar.frame.size.height + toolbarPadding)];
+//        }
         // When positionning the iphone to landscape mode, status bar is hidden. The problem is that we set the webview height just before with removing the status bar height. We need to adjust the phenomen by adding the preview status bar height. We had to add manually 20 (pixel) because in landscape mode, the status bar height is equal to 0.
-        if (statusBarOffset == 0) {
-            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, (self.webView.frame.size.height+20))];
-        }
+//        if (statusBarOffset == 0) {
+//            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, (self.webView.frame.size.height+20))];
+//        }
         
-    } else {
-        // iOS <=10
-        CGFloat webviewOffset = _browserOptions.fullscreen ? toolbarPadding + toolbarHeight - statusBarOffset: toolbarHeight;
-        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarOffset+toolbarHeight) : 0;
-        if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
-            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, self.webView.frame.size.height+webviewHeightOffset)];
-            [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, self.toolbar.frame.size.width, self.toolbar.frame.size.height+toolbarPadding)];
-        }
     }
+//    else {
+//        // iOS <=10
+//        CGFloat webviewOffset = _browserOptions.fullscreen ? toolbarPadding + toolbarHeight - statusBarOffset: toolbarHeight;
+//        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarOffset+toolbarHeight) : 0;
+//        if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
+//            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, self.webView.frame.size.height+webviewHeightOffset)];
+//            [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, self.toolbar.frame.size.width, self.toolbar.frame.size.height+toolbarPadding)];
+//        }
+//    }
     
-    if (self.titleLabel) {
-        CGFloat screenWidth = CGRectGetWidth(self.view.frame);
-        NSInteger width = floorf(screenWidth - (self.titleOffsetLeft + self.titleOffsetRight));
-        CGFloat leftOffset;
-        if(self.titleOffsetLeft > 0 && self.titleOffsetRight > 0){
-            leftOffset = floorf((screenWidth - width) / 2.0f);
-        }else if(self.titleOffsetLeft > 0){
-            leftOffset = self.titleOffsetLeft;
-        }else{
-            leftOffset = self.toolbarPaddingX;
-        }
-        self.titleLabel.frame = CGRectMake(leftOffset, toolbarPadding/2, width, toolbarHeight+(toolbarPadding/2));
-    }
+//    if (self.titleLabel) {
+//        CGFloat screenWidth = CGRectGetWidth(self.view.frame);
+//        NSInteger width = floorf(screenWidth - (self.titleOffsetLeft + self.titleOffsetRight));
+//        CGFloat leftOffset;
+//        if(self.titleOffsetLeft > 0 && self.titleOffsetRight > 0){
+//            leftOffset = floorf((screenWidth - width) / 2.0f);
+//        }else if(self.titleOffsetLeft > 0){
+//            leftOffset = self.titleOffsetLeft;
+//        }else{
+//            leftOffset = self.toolbarPaddingX;
+//        }
+//        self.titleLabel.frame = CGRectMake(leftOffset, toolbarPadding/2, width, toolbarHeight+(toolbarPadding/2));
+//    }
     
     [self layoutButtons];
 }
@@ -1668,7 +1797,14 @@
 - (NSUInteger)supportedInterfaceOrientations
 {
     if ((self.orientationDelegate != nil) && [self.orientationDelegate respondsToSelector:@selector(supportedInterfaceOrientations)]) {
-        return [self.orientationDelegate supportedInterfaceOrientations];
+//        return [self.orientationDelegate supportedInterfaceOrientations];
+//        return UIInterfaceOrientationMaskLandscapeRight;
+        if([_orientation isEqualToString:@"LANDSCAPE"]){
+            return UIInterfaceOrientationMaskLandscapeRight | UIInterfaceOrientationMaskLandscapeLeft;
+        }else if([_orientation isEqualToString:@"PORTRAIT"]){
+            return UIInterfaceOrientationMaskPortrait;
+        }
+        return UIInterfaceOrientationMaskLandscapeLeft | UIInterfaceOrientationMaskLandscapeRight | UIInterfaceOrientationMaskPortrait;
     }
     
     return 1 << UIInterfaceOrientationPortrait;
@@ -1730,14 +1866,18 @@
         
         self.statusbar = nil;
         self.toolbar = nil;
+        self.toolbarfull = nil;
         self.title = nil;
         self.backButton = nil;
         self.forwardButton = nil;
         self.closeButton = nil;
+        self.fullButton = nil;
+        self.fullcloseButton = nil;
         self.menu = nil;
         self.backButtonCanClose = NO;
         self.disableAnimation = NO;
         self.fullscreen = NO;
+        self.fullscreen_first = NO;
     }
     
     return self;
