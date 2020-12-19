@@ -1590,9 +1590,9 @@
         //webview 竖屏 距离顶部 y 轴偏移量 全屏 = 状态栏高度  非全屏 = toolbar+状态栏高度
         //webview 横屏 左右边距 有刘海的一遍不要计算在内,会遮挡页面 UIInterfaceOrientationLandscapeRight=刘海在左
           if (statusBarOffset == 0 && orientation == UIInterfaceOrientationLandscapeRight) {
-              [self.webView setFrame:CGRectMake(insets.left - 20, webviewYOffset, screenWidth - insets.left + 20 , webviewHeight)];
+              [self.webView setFrame:CGRectMake(insets.left - 14, webviewYOffset, screenWidth - insets.left + 14 , webviewHeight)];
           } else if (statusBarOffset == 0 && orientation == UIInterfaceOrientationLandscapeLeft) {
-              [self.webView setFrame:CGRectMake(0, webviewYOffset,screenWidth - insets.right +20, webviewHeight)];
+              [self.webView setFrame:CGRectMake(0, webviewYOffset,screenWidth - insets.right + 14, webviewHeight)];
           } else {
               [self.webView setFrame:CGRectMake(0, webviewYOffset, screenWidth , webviewHeight)];
           }
