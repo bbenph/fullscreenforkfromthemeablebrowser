@@ -824,7 +824,7 @@
 //    CGFloat toolbarfullY = 0.0;
     CGRect toolbarfullFrame = CGRectMake(0.0, 0.0, self.view.bounds.size.width, toolbarHeight);
     
-    self.toolbarfull = [[UIView alloc] initWithFrame:toolbarfullFrame];
+        self.toolbarfull = [[UIView4OverridehitTest alloc] initWithFrame:toolbarfullFrame];
         self.toolbarfull.alpha = 1.000;
         self.toolbarfull.autoresizesSubviews = YES;
         self.toolbarfull.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -1010,6 +1010,7 @@
     
     //把 退出全屏按钮放到 toolbarfull 栏中
     [self.toolbarfull addSubview:self.closefullscButton];
+    [self.toolbarfull bringSubviewToFront:self.closefullscButton];
     
     
     self.view.backgroundColor = [CDVThemeableBrowserViewController colorFromRGBA:[self getStringFromDict:_browserOptions.statusbar withKey:kThemeableBrowserPropColor withDefault:@"#ffffffff"]];
@@ -1943,3 +1944,15 @@
 
 @end
 
+// 为了重写 hitTest 方法 让 toolbarfull 使点击事件穿透透明的 toolbarfull 传达到 webview
+@implementation UIView4OverridehitTest : UIView
+
+- (UIView*)hitTest:(CGPoint)point withEvent:(UIEvent *)event{
+    UIView *hitView = [super hitTest:point withEvent:event];
+    if(hitView == self){
+        return nil;
+    }
+    return hitView;
+}
+
+@end

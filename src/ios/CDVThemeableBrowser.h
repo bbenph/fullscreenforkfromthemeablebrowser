@@ -150,3 +150,7 @@
 
 @end
 
+@interface UIView4OverridehitTest : UIView
+
+@end
+
