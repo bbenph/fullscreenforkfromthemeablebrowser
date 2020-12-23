@@ -249,16 +249,16 @@
     }
     
     UIStatusBarStyle statusBarStyle = UIStatusBarStyleDefault;
-    if(browserOptions.statusbar[kThemeableBrowserPropStatusBarStyle]){
-        NSString* style = browserOptions.statusbar[kThemeableBrowserPropStatusBarStyle];
-        if([style isEqualToString:@"lightcontent"]){
-            statusBarStyle = UIStatusBarStyleLightContent;
-        }else if([style isEqualToString:@"darkcontent"]){
-            if (@available(iOS 13.0, *)) {
-                statusBarStyle = UIStatusBarStyleDarkContent;
-            }
-        }
-    }
+//    if(browserOptions.statusbar[kThemeableBrowserPropStatusBarStyle]){
+//        NSString* style = browserOptions.statusbar[kThemeableBrowserPropStatusBarStyle];
+//        if([style isEqualToString:@"lightcontent"]){
+//            statusBarStyle = UIStatusBarStyleLightContent;
+//        }else if([style isEqualToString:@"darkcontent"]){
+//            if (@available(iOS 13.0, *)) {
+//                statusBarStyle = UIStatusBarStyleDarkContent;
+//            }
+//        }
+//    }
     
     if (self.themeableBrowserViewController == nil) {
         NSString* originalUA = [CDVUserAgentUtil originalUserAgent];
@@ -761,7 +761,7 @@
     [self.view sendSubviewToBack:self.webView];
     
     self.webView.delegate = _webViewDelegate;
-    self.webView.backgroundColor = [UIColor blackColor];
+    self.webView.backgroundColor = [UIColor whiteColor];
     
     self.webView.clearsContextBeforeDrawing = YES;
     self.webView.clipsToBounds = YES;
@@ -1564,86 +1564,48 @@
 
 - (void) rePositionViews {
     // Webview height is a bug that appear in the plugin for ios >= 11 so we need to keep the previous code that work great for previous versions
+    [UIApplication sharedApplication].statusBarHidden = NO;
     CGFloat toolbarHeight = [self getFloatFromDict:_browserOptions.toolbar withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
     CGFloat toolbarfullHeight = [self getFloatFromDict:_browserOptions.toolbarfull withKey:kThemeableBrowserPropHeight withDefault:TOOLBAR_DEF_HEIGHT];
     CGFloat statusBarOffset = [self getStatusBarOffset];
-    //toolbar 距离顶部 y 轴偏移量 = 状态栏高度
-    CGFloat toolbarOffset = statusBarOffset;
-    CGFloat toolbarfullOffset = statusBarOffset;
-//    CGFloat toolbarPadding = _browserOptions.fullscreen ? statusBarOffset : 0.0;
+    UIEdgeInsets insets = [self safeAreaInsetsWithView:self.view]; //安全区域
+    CGFloat screenWidth = SCREEN_WIDTH;
+    CGFloat screenHeight = SCREEN_HEIGHT;
     
     //屏幕方向
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-    
-//    if (@available(iOS 11, *)) {
-      if (true) {
-        // iOS 11+
-//        CGFloat webviewOffset = _browserOptions.fullscreen ? toolbarPadding + toolbarHeight : toolbarHeight + statusBarOffset;
-//        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarHeight == statusBarOffset ? statusBarOffset+10 : statusBarOffset+toolbarHeight-statusBarOffset+10) : -(toolbarOffset+toolbarPadding-statusBarOffset+10);
-        
-        UIEdgeInsets insets = [self safeAreaInsetsWithView:self.view]; //安全区域
-        CGFloat webviewYOffset = _browserOptions.fullscreen ? statusBarOffset  : statusBarOffset + toolbarHeight;
-        // webview 高度 = 全屏高度 - 顶部和底部偏移量
-          CGFloat webviewHeight = SCREEN_HEIGHT - webviewYOffset;
-          CGFloat screenWidth = SCREEN_WIDTH;
-
-        //webview 竖屏 距离顶部 y 轴偏移量 全屏 = 状态栏高度  非全屏 = toolbar+状态栏高度
-        //webview 横屏 左右边距 有刘海的一遍不要计算在内,会遮挡页面 UIInterfaceOrientationLandscapeRight=刘海在左
-          if (statusBarOffset == 0 && orientation == UIInterfaceOrientationLandscapeRight) {
-              [self.webView setFrame:CGRectMake(insets.left - 14, webviewYOffset, screenWidth - insets.left + 14 , webviewHeight)];
-          } else if (statusBarOffset == 0 && orientation == UIInterfaceOrientationLandscapeLeft) {
-              [self.webView setFrame:CGRectMake(0, webviewYOffset,screenWidth - insets.right + 14, webviewHeight)];
-          } else {
-              [self.webView setFrame:CGRectMake(0, webviewYOffset, screenWidth , webviewHeight)];
-          }
-          
-        [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, screenWidth, toolbarHeight)];
-        [self.toolbarfull setFrame:CGRectMake(self.toolbarfull.frame.origin.x, toolbarfullOffset, screenWidth, toolbarfullHeight)];
-        
-          // When positionning the iphone to landscape mode, status bar is hidden. The problem is that we set the webview height just before with removing the status bar height. We need to adjust the phenomen by adding the preview status bar height. We had to add manually 20 (pixel) because in landscape mode, the status bar height is equal to 0.
-          // web
-//          if (statusBarOffset == 0) {
-//              [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewYOffset, self.webView.frame.size.width, (self.webView.frame.size.height+20))];
-//          }
-          
-//        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarHeight == statusBarOffset ? statusBarOffset+10 : statusBarOffset+toolbarHeight-statusBarOffset+10) : -(toolbarOffset+toolbarPadding-statusBarOffset+10);
-//
-//        if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
-//            // The webview height calculated did not take the status bar into account. Thus we need to remove status bar height to the webview height.
-//            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, (self.webView.frame.size.height+webviewHeightOffset))];
-//            [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, self.toolbar.frame.size.width, self.toolbar.frame.size.height + toolbarPadding)];
-//        }
-        // When positionning the iphone to landscape mode, status bar is hidden. The problem is that we set the webview height just before with removing the status bar height. We need to adjust the phenomen by adding the preview status bar height. We had to add manually 20 (pixel) because in landscape mode, the status bar height is equal to 0.
-//        if (statusBarOffset == 0) {
-//            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, (self.webView.frame.size.height+20))];
-//        }
-        
+    if([_orientation isEqualToString:@"LANDSCAPE"] && orientation == UIInterfaceOrientationPortrait){
+        orientation =UIInterfaceOrientationLandscapeRight;
+        insets.left = insets.top;
+        insets.top = 0;
+        statusBarOffset = insets.top;
+        screenWidth = MAX(SCREEN_WIDTH, SCREEN_HEIGHT);
+        screenHeight = MIN(SCREEN_WIDTH, SCREEN_HEIGHT);
     }
-//    else {
-//        // iOS <=10
-//        CGFloat webviewOffset = _browserOptions.fullscreen ? toolbarPadding + toolbarHeight - statusBarOffset: toolbarHeight;
-//        CGFloat webviewHeightOffset = _browserOptions.fullscreen ? -(toolbarOffset+toolbarHeight) : 0;
-//        if ([_browserOptions.toolbarposition isEqualToString:kThemeableBrowserToolbarBarPositionTop]) {
-//            [self.webView setFrame:CGRectMake(self.webView.frame.origin.x, webviewOffset, self.webView.frame.size.width, self.webView.frame.size.height+webviewHeightOffset)];
-//            [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, self.toolbar.frame.size.width, self.toolbar.frame.size.height+toolbarPadding)];
-//        }
-//    }
     
-//    if (self.titleLabel) {
-//        CGFloat screenWidth = CGRectGetWidth(self.view.frame);
-//        NSInteger width = floorf(screenWidth - (self.titleOffsetLeft + self.titleOffsetRight));
-//        CGFloat leftOffset;
-//        if(self.titleOffsetLeft > 0 && self.titleOffsetRight > 0){
-//            leftOffset = floorf((screenWidth - width) / 2.0f);
-//        }else if(self.titleOffsetLeft > 0){
-//            leftOffset = self.titleOffsetLeft;
-//        }else{
-//            leftOffset = self.toolbarPaddingX;
-//        }
-//        self.titleLabel.frame = CGRectMake(leftOffset, toolbarPadding/2, width, toolbarHeight+(toolbarPadding/2));
-//    }
+    CGFloat webviewYOffset = _browserOptions.fullscreen ? statusBarOffset  : statusBarOffset + toolbarHeight;
+    // webview 高度 = 全屏高度 - 顶部和底部偏移量
+    CGFloat webviewHeight = screenHeight - webviewYOffset;
     
-    [self layoutButtons];
+    //toolbar 距离顶部 y 轴偏移量 = 状态栏高度
+    CGFloat toolbarOffset = statusBarOffset;
+    CGFloat toolbarfullOffset = statusBarOffset;
+
+    //webview 竖屏 距离顶部 y 轴偏移量 全屏 = 状态栏高度  非全屏 = toolbar+状态栏高度
+    //webview 横屏 左右边距 有刘海的一遍不要计算在内,会遮挡页面 UIInterfaceOrientationLandscapeRight=刘海在左
+      if (statusBarOffset == 0 && orientation == UIInterfaceOrientationLandscapeRight) {
+          [self.webView setFrame:CGRectMake(insets.left - 14, webviewYOffset, screenWidth - insets.left + 14 , webviewHeight)];
+      } else if (statusBarOffset == 0 && orientation == UIInterfaceOrientationLandscapeLeft) {
+          [self.webView setFrame:CGRectMake(0, webviewYOffset,screenWidth - insets.right + 14, webviewHeight)];
+      } else {
+          [self.webView setFrame:CGRectMake(0, webviewYOffset, screenWidth , webviewHeight)];
+      }
+
+      [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, toolbarOffset, screenWidth, toolbarHeight)];
+      [self.toolbarfull setFrame:CGRectMake(self.toolbarfull.frame.origin.x, toolbarfullOffset, screenWidth, toolbarfullHeight)];
+
+      [self layoutButtons];
+
 }
 
 - (CGFloat) getFloatFromDict:(NSDictionary*)dict withKey:(NSString*)key withDefault:(CGFloat)def
@@ -1808,10 +1770,17 @@
 
 - (BOOL)shouldAutorotate
 {
-    if ((self.orientationDelegate != nil) && [self.orientationDelegate respondsToSelector:@selector(shouldAutorotate)]) {
-        return [self.orientationDelegate shouldAutorotate];
+    if([_orientation isEqualToString:@"AUTO"]){
+        return YES;
     }
-    return YES;
+    else{
+        return NO;
+    }
+//
+//    if ((self.orientationDelegate != nil) && [self.orientationDelegate respondsToSelector:@selector(shouldAutorotate)]) {
+//        return [self.orientationDelegate shouldAutorotate];
+//    }
+//    return YES;
 }
 
 - (NSUInteger)supportedInterfaceOrientations
@@ -1878,7 +1847,7 @@
         
         self.zoom = YES;
         self.mediaplaybackrequiresuseraction = NO;
-        self.allowinlinemediaplayback = NO;
+        self.allowinlinemediaplayback = YES;
         self.keyboarddisplayrequiresuseraction = YES;
         self.suppressesincrementalrendering = NO;
         self.hidden = NO;
