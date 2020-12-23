@@ -1575,6 +1575,7 @@
     //屏幕方向
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
     if([_orientation isEqualToString:@"LANDSCAPE"] && orientation == UIInterfaceOrientationPortrait){
+        [UIApplication sharedApplication].statusBarHidden = YES;
         orientation =UIInterfaceOrientationLandscapeRight;
         insets.left = insets.top;
         insets.top = 0;
